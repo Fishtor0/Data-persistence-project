@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+
+    public TextMeshProUGUI bestScoreText;
+    public int highScore;
+    public string topPlayer;
+    public string playerName;
     
     private bool m_Started = false;
     private int m_Points;
@@ -22,6 +28,12 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        highScore = PersistentData.persistentData.highScore;
+        topPlayer = PersistentData.persistentData.topPlayer;
+        playerName = PersistentData.persistentData.currentPlayerName;
+
+        UpdateBestScoreDistplay();
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -70,7 +82,36 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        SetHighScore(m_Points);
+
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        PersistentData.persistentData.SaveHighScore();
+    }
+
+    public void SetPlayerName(string newPlayerName)
+    {
+        this.playerName = newPlayerName;
+    }
+
+    private void SetHighScore(int newScore)
+    {
+        if (highScore < newScore)
+        {
+            this.highScore = newScore;
+            this.topPlayer = playerName;
+
+            UpdateBestScoreDistplay();
+
+            PersistentData.persistentData.SetHighScore(this.highScore);
+            PersistentData.persistentData.SetTopPlayer(this.topPlayer);
+
+        }
+    }
+
+    private void UpdateBestScoreDistplay()
+    {
+        bestScoreText.SetText("Best Score: " + topPlayer + ": " + highScore);
     }
 }
