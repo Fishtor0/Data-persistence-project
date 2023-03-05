@@ -59,7 +59,7 @@ public class  PersistentData : MonoBehaviour
     public void LoadHighScore()
     {
         string path = Application.persistentDataPath + "/savedFile.json";
-
+        Debug.Log("PATH: " + path);
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
